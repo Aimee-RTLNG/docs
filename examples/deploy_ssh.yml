@@ -1,0 +1,46 @@
+name: Build & Deploy 🚀
+
+on:
+  workflow_dispatch: # Allows you to run this workflow manually from the Actions tab
+      
+permissions:
+  contents: read # Allows the access to the repo files
+  
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        node-version: [16.16]
+    steps:
+      # Downloads and makes the project's source code available for subsequent steps.
+      - name: 📂 Récupère le code de la branche
+        uses: actions/checkout@v3
+
+      # Configure SSH access for subsequent steps.
+      - name: 🔑 Configure les accès SSH 1/2
+        uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          name: github-action # utilisé dans le RSYNC
+          known_hosts: 'just-a-placeholder-so-we-dont-get-errors'
+          config: |
+            Host server
+              HostName ${{ secrets.SSH_HOST }}
+              User ${{ secrets.SSH_USER }}
+              Port ${{ secrets.SSH_PORT }}
+              IdentityFile ~/.ssh/github-action
+
+      - name: 🔑 Configure les accès SSH 2/2
+        run: ssh-keyscan -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
+
+      # # Sends the build folder to the server
+      - name: 📦 Commandes RSYNC
+        # ATTENTION AU PATH SUR LE SERVEUR, ON SE RETROUVE POSSIBLEMENT A LA RACINE !!
+        run: rsync -avz --ignore-existing --dry-run -e 'ssh -i ~/.ssh/github-action' --timeout=5 ./public/build/ ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/
+
+      # Get the branch code with a git pull in SSH
+      # Sync database & cache in SSH
+      - name: 🤖 Commandes en SSH
+        run: ssh server 'node --v'
