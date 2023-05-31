@@ -23,11 +23,14 @@ Pour déployer via les github actions, il nous faudra une nouvelle clef SSH.
 - Se placer dans le dossier .ssh ou le créer s'il n'existe pas
 - Générer une clef SSH avec la commande suivante : 
     > ssh-keygen -t rsa -b 4096 -C "your_email@example.com"
+  
   La clef publique possède l'extension .pub, alors que la clef privée n'en a pas.
 - Ajouter la clef publique dans `authorized_keys` pour que les machines avec la clef privée puissent accéder au serveur.
     > cat id_rsa.pub >> ~/.ssh/authorized_keys
 - Ajouter la clef privée dans les Secrets du repo
-    > Titre : `SSH_PRIVATE_KEY`
-    > Contenu : copier le contenu du fichier sans extension (id_rsa)
+  - Titre : `SSH_PRIVATE_KEY`
+  - Contenu : copier le contenu du fichier sans extension (id_rsa)
+
 Pour la GitHub action, on va utiliser le package `shimataro/ssh-key-action@v2`. 
+
 Voir la GitHub action ici : https://github.com/Aimee-RTLNG/docs/blob/main/examples/deploy_ssh.yml 
