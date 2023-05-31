@@ -34,3 +34,7 @@ Pour déployer via les github actions, il nous faudra une nouvelle clef SSH.
 Pour la GitHub action, on va utiliser le package `shimataro/ssh-key-action@v2`. 
 
 Voir la GitHub action ici : https://github.com/Aimee-RTLNG/docs/blob/main/examples/deploy_ssh.yml 
+
+Attention au dossier par défaut dans lequel arrive l'utilisateur SSH : il faut que ce soit dans ce dossier que se trouve le dossier .ssh et les différentes clefs.
+
+Une fois connecté en SSH, il faut penser à changer de dossier si nécessaire. 
